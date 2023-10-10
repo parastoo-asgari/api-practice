@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bacasime+Antique&family=Caprasimo&family=Caveat&family=Chewy&family=Dancing+Script:wght@400;500;600;700&family=Domine&family=Kalam&family=Lato:wght@100;400&family=Lora:ital,wght@0,400;1,500&family=Lugrasimo&family=Merriweather&family=Noto+Sans&family=Oswald:wght@300&family=PT+Serif&family=Pacifico&family=Poppins:ital@0;1&family=REM:wght@300&family=Roboto:ital,wght@0,500;1,400&family=Signika+Negative:wght@300&family=Sriracha&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            min-height: 100vh;
+            background-color: rgb(41, 40, 40);
+            color: white;
+            font-family: 'Sriracha', cursive;
+        }
+
+        h1 {
+            text-align: center;
+            width: 100%;
+            margin: 20px 0;
+            font-size: 3rem;
+            color: rgb(19, 97, 97);
+        }
+
+        #list {
+            width: 60%;
+            padding: 40px;
+            border: 1px solid rgb(70, 68, 68);
+            box-shadow: 10px 10px 15px black;
+            border-radius: 20px;
+            margin: 50px auto;
+        }
+
+        .art {
+            width: 100%;
+            height: 250px;
+            border-bottom: 1px solid rgb(59, 59, 59);
+            padding: 10px;
+            display: flex;
+            transition: 1s;
+            margin: 30px 0;
+        }
+
+        .art figure {
+            width: 50%;
+
+        }
+
+        figure img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 5px 5px 10px black;
+        }
+
+        .art div {
+            width: 50%;
+            padding-left: 30px;
+        }
+
+
+        button {
+            width: 20%;
+            height: 70px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            font-size: 30px;
+            background-color: rgb(10, 59, 59);
+            border: none;
+            outline: none;
+            border-radius: 30px;
+            transition: 0.6s;
+            color: rgb(17, 17, 17);
+        }
+
+        button:hover {
+            transform: translateY(-8px);
+            color: white;
+        }
+
+        .filter {
+            position: fixed;
+            top: 0;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body onload="getData()">
+    <h1>parastoo asgari</h1>
+    <div class="filter">
+        <label for="para1">male:</label>
+        <input type="radio" id="para1" name="para" value="male">
+        <label for="para2">female:</label>
+        <input type="radio" id="para2" name="para" value="female">
+        <span id="reset" onclick="reset()">reset</span>
+    </div>
+    <div id="list"></div>
+    <button onclick="getData()">load more</button>
+
+</body>
+
+<script>
+    let arts = ''
+    let num = 10
+    function getData() {
+        document.getElementById('list').innerHTML = ''
+        fetch('https://randomuser.me/api/?results=' + num)
+            .then(response => response.json())
+            .then(val => {
+                val.results.map((item) => {
+                    let art = document.createElement('article')
+                    art.classList.add('art')
+                    art.setAttribute('data-status', item.gender)
+                    art.innerHTML = `
+                <figure>
+                <img src="${item.picture.large}" alt="">
+                </figure>
+                <div>
+                    <h2>${item.name.first} ${item.name.last}</h2>
+                    <h3>${item.location.country}</h3>
+                    <h3>${item.email}</h3>
+                    <h3>${item.gender}</h3>
+                    </div>
+                    `
+                    document.getElementById('list').appendChild(art)
+                })
+
+            })
+        num += 10
+    }
+// -------------------input------------
+    const inp = document.querySelectorAll('.filter input')
+    inp.forEach((val) => {
+        val.addEventListener('change', () => {
+            arts = document.querySelectorAll('#list > article')
+
+            if (val.checked) {
+                arts.forEach((artTag) => {
+                    if (
+                        (artTag.getAttribute('data-status')) == val.value
+                    ) {
+                        artTag.style.opacity = '1'
+                    }
+                    else {
+                        artTag.style.opacity = '.2'
+
+                    }
+                })
+            }
+        })
+    })
+    // ------------------------reset-----------------
+    function reset() {
+        arts.forEach((val) => {
+            val.style.opacity = '1'
+        })
+    }
+</script>
+
+</html>
